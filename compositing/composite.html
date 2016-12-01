@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+    <head>
+        <!-- <link rel="stylesheet" type="text/css" media="all" href="css/reset.css" />  --><!-- reset css -->
+        <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+        
+        <style>
+            body{ background-color: transparent; padding:20px; }
+            #canvas{border:1px solid red;}
+            </style>
+        
+        <script>
+            $(function(){
+              
+              var canvas=document.getElementById("canvas");
+              var ctx=canvas.getContext("2d");
+              
+              
+              var imageToReveal;
+              //var newColor="red";
+              
+              var imageURLs=[];
+              var imagesOK=0;
+              var imgs=[];
+              imageURLs.push("file:///Users/craigdunk/dcc/shared-scratch/compositing//imagetoreveal.jpg");
+          
+              loadAllImages();
+              
+              function loadAllImages(){
+              for (var i = 0; i < imageURLs.length; i++) {
+              var img = new Image();
+              imgs.push(img);
+              img.onload = function(){ imagesOK++; imagesAllLoaded(); };
+              img.src = imageURLs[i];
+              }
+              }
+              
+              var imagesAllLoaded = function() {
+              if (imagesOK==imageURLs.length ) {
+              // all images are fully loaded an ready to use
+              imageToReveal=imgs[0];
+    
+              canvas.addEventListener("mouseup", handleMouseUp);
+              }
+              };
+              
+              
+              function handleMouseUp(mouseEvent){
+              
+                var x = mouseEvent.pageX - $('#canvas').offset().left;
+                var y = mouseEvent.pageY - $('#canvas').offset().top;
+ 
+                // save the context state
+                ctx.save();
+              
+              
+              
+                // draw the a rect to reveal
+                ctx.fillStyle="red";
+                ctx.fillRect(x,y,30,30);
+              
+
+                // change composite mode to source-in
+                // any new drawing will only overwrite existing pixels
+                ctx.globalCompositeOperation="source-in";
+              
+                // draw the image
+                // Only the rectangle will get the image
+                ctx.drawImage(imageToReveal, 0, 0, canvas.width,canvas.height);
+              
+         
+            
+                ctx.restore();
+              
+              }
+              
+              
+              }); // end $(function(){});
+            </script>
+        
+    </head>
+    
+    <body>
+        <canvas id="canvas" width=500 height=500></canvas>
+    </body>
+</html>
